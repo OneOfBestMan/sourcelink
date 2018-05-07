@@ -27,6 +27,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.SourceLink.Git.In
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.SourceLink.GitHub.UnitTests", "src\SourceLink.GitHub.UnitTests\Microsoft.SourceLink.GitHub.UnitTests.csproj", "{15CD9412-587A-457A-94BD-89D69DA7F4B3}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.SourceLink.GitLab", "src\SourceLink.GitLab\Microsoft.SourceLink.GitLab.csproj", "{1680CB82-07D4-4ADC-84F3-363F58281336}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.SourceLink.GitLab.UnitTests", "src\SourceLink.GitLab.UnitTests\Microsoft.SourceLink.GitLab.UnitTests.csproj", "{567CD540-824E-4747-B36F-D7A0802A2E7B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +85,14 @@ Global
 		{15CD9412-587A-457A-94BD-89D69DA7F4B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15CD9412-587A-457A-94BD-89D69DA7F4B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{15CD9412-587A-457A-94BD-89D69DA7F4B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1680CB82-07D4-4ADC-84F3-363F58281336}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1680CB82-07D4-4ADC-84F3-363F58281336}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1680CB82-07D4-4ADC-84F3-363F58281336}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1680CB82-07D4-4ADC-84F3-363F58281336}.Release|Any CPU.Build.0 = Release|Any CPU
+		{567CD540-824E-4747-B36F-D7A0802A2E7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{567CD540-824E-4747-B36F-D7A0802A2E7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{567CD540-824E-4747-B36F-D7A0802A2E7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{567CD540-824E-4747-B36F-D7A0802A2E7B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
