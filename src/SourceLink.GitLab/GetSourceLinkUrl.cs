@@ -15,20 +15,27 @@ namespace Microsoft.SourceLink.GitLab
     /// </summary>
     public sealed class GetSourceLinkUrl : Task
     {
+        // http://gitlab-ee.hxakzvpf0otezeojz3wqhme5wg.cx.internal.cloudapp.net/Administrator/test1.git
         private static readonly Uri s_defaultContentUri = new Uri("https://raw.githubusercontent.com");
+
+        private const string GitLabExternalUrlItemGroupName = "SourceLinkGitLabExternalUrl";
+        private const string PackageDisplayName = "Microsoft.SourceLink.GitLab";
+        private const string GitLabName = "GitLab";
+
         private const string SourceControlName = "git";
-        private const string DefaultDomain = "github.com";
         private const string NotApplicableValue = "N/A";
-        private const string ContentUrlMetadataName = "ContentUrl";
 
         [Required]
         public ITaskItem SourceRoot { get; set; }
 
         /// <summary>
-        /// List of additional repository hosts for which the task produces SourceLink URLs.
-        /// Each item maps a domain of a repository host (stored in the item identity) to a URL of the server that provides source file content (stored in <c>ContentUrl</c> metadata).
+        /// ExternalUrls lists base URLs of git repositories hosted by GitLab.
+        /// Multiple values can be specified if you have mutliple GitLab instances with different external URL.
+        /// The task will use this list to match URLs stored in the git repository (remote origin and submodule URLs).
+        /// 
+        /// See https://docs.gitlab.com/omnibus/settings/configuration.html#configuring-the-external-url-for-gitlab
         /// </summary>
-        public ITaskItem[] Hosts { get; set; }
+        public string ExternalUrls { get; set; }
 
         [Output]
         public string SourceLinkUrl { get; set; }
@@ -41,6 +48,13 @@ namespace Microsoft.SourceLink.GitLab
 
         private void ExecuteImpl()
         {
+            var externalUris = GetExternalUris().ToArray();
+            if (externalUris.Length == 0)
+            {
+                Log.LogError(Resources.PackageNeedsAtLeastOneServerUrl, GitLabExternalUrlItemGroupName, PackageDisplayName, GitLabName);
+                return;
+            }
+
             // skip SourceRoot that already has SourceLinkUrl set, or its SourceControl is not "git":
             if (!string.IsNullOrEmpty(SourceRoot.GetMetadata(Names.SourceRoot.SourceLinkUrl)) ||
                 !string.Equals(SourceRoot.GetMetadata(Names.SourceRoot.SourceControl), SourceControlName, StringComparison.OrdinalIgnoreCase))
@@ -56,8 +70,7 @@ namespace Microsoft.SourceLink.GitLab
                 return;
             }
 
-            var mappings = GetUrlMappings().ToArray();
-            var contentUri = GetMatchingContentUri(mappings, repoUri.Host);
+            var contentUri = MapRepositoryUrl(repoUri, externalUris);
             if (contentUri == null)
             {
                 SourceLinkUrl = NotApplicableValue;
@@ -83,7 +96,30 @@ namespace Microsoft.SourceLink.GitLab
                 relativeUrl = relativeUrl.Substring(0, relativeUrl.Length - gitUrlSuffix.Length);
             }
 
-            SourceLinkUrl = new Uri(contentUri, relativeUrl).ToString() + "/" + revisionId + "/*";
+            SourceLinkUrl = new Uri(contentUri, relativeUrl).ToString() + "/raw/" + revisionId + "/*";
+        }
+
+        private IEnumerable<Uri> GetExternalUris()
+        {
+            var urls = ExternalUrls?.Split(';', StringSplitOptions.RemoveEmptyEntries) ?? Array.Empty<string>();
+
+            foreach (string url in urls)
+            {
+                if (Uri.TryCreate(url, UriKind.Absolute, out var uri))
+                {
+                    yield return uri;
+                }
+                else
+                {
+                    Log.LogWarning(Resources.SpecifiesAnInvalidUrl, GitLabExternalUrlItemGroupName, url);
+                }
+            }
+        }
+
+        private Uri MapRepositoryUrl(Uri repoUri, Uri[] externalUris)
+        {
+            // TODO:
+            return null;
         }
     }
 }

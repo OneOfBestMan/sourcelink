@@ -16,7 +16,23 @@
   </PropertyGroup>
 
   <Target Name="_InitializeGitLabSourceLinkUrl" Inputs="@(SourceRoot)" Outputs="|%(Identity)|">
-    <Microsoft.SourceLink.GitLab.GetSourceLinkUrl SourceRoot="@(SourceRoot)">
+    <!--
+      The task calculates SourceLink URL for a given SourceRoot.
+      
+      SourceLinkGitLabExternalUrl item group lists base URLs of git repositories hosted by GitLab.
+      Multiple values can be specified if you have mutliple GitLab instances with different external URL.
+      The task will use this list to match URLs stored in the git repository (remote origin and submodule URLs).
+      
+      Include value passed to external_url in /etc/gitlab/gitlab.rb on your GitLab server.
+      See https://docs.gitlab.com/omnibus/settings/configuration.html#configuring-the-external-url-for-gitlab
+      
+      For example:
+
+      <ItemGroup>
+        <SourceLinkGitLabExternalUrl Include="http://gitlab.example.com" />
+      </ItemGroup>
+    -->
+    <Microsoft.SourceLink.GitLab.GetSourceLinkUrl SourceRoot="@(SourceRoot)" ExternalUrls="@(SourceLinkGitLabExternalUrl)">
       <Output TaskParameter="SourceLinkUrl" PropertyName="_SourceLinkUrlToUpdate"/>
     </Microsoft.SourceLink.GitLab.GetSourceLinkUrl>
 
